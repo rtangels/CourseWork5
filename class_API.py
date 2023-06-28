@@ -19,7 +19,7 @@ class HН_employer():
             'User-Agent': 'Mozilla/5.0 (platform; rv:gekoversion)  Gecko/geckotrail YaBrowser/23.3.3.719'}
         self.__params ={
             "page": 0,
-            "per_page": 100
+            "per_page": 5
         }
         self.__name = ''
         self.__vacancies = []
@@ -107,6 +107,7 @@ class HН_employer():
                     'salary_from': salary_from if salary_from else 0,
                     'salary_to': salary_to if salary_to else 0,
                     'requirement': row['snippet']['requirement'],
+                    'link': row['alternate_url'],
                     'employer_name': row['employer']['name']
                 }
                 vacancies.append(temp_dict)
