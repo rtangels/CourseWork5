@@ -10,7 +10,7 @@ class DBManager():
     def __init__(self):
         """Конструктор класса"""
         self.conn = psycopg2.connect(host = 'localhost',
-        database = 'CorseTest',
+        database = 'Coursework5',
         user = 'postgres',
         password = str(os.getenv('PSQL_KEY')))
 
@@ -58,31 +58,36 @@ class DBManager():
         with self.conn.cursor() as cur:
             cur.execute("""SELECT employer_name,title, salary_from, salary_to,url 
              FROM vacancies """)
-        result = cur.fetchall()
+            result = cur.fetchall()
 
         return result
 
     def get_avg_salary(self):
         """Выводит среднюю зарплату"""
         with self.conn.cursor() as cur:
-            cur.execute("""SELECT (AVG(salary_from)+AVG(salary_to))/2 AS average  FROM vacancies """)
+            cur.execute("""SELECT CAST((AVG(salary_from)+AVG(salary_to))/2 AS int)  FROM vacancies """)
             result = cur.fetchone()
-        return result
+        return result[0]
 
-    def get_vacancies_with_higher_salary(
-            self):  # поиск вакансии по средней зп и фильтрации выше нее
-        self.cur.execute(
-            """SELECT AVG(CAST(salary AS numeric)) FROM vacancies""")
-        avg_salary = self.cur.fetchone()[0]
-        self.cur.execute(
-            f"""SELECT * FROM vacancies WHERE CAST(salary AS numeric) > {avg_salary}""")
-        result = self.cur.fetchall()
+    def get_vacancies_with_higher_salary(self):
+        """Выводит все вакансии больше средней"""
+        with self.conn.cursor() as cur:
+
+            avg_salary = self.get_avg_salary()#cur.fetchone()[0]
+            cur.execute(
+                f"""SELECT title, salary_from, salary_to
+                FROM vacancies WHERE CAST(salary_from AS numeric) > {avg_salary}
+                 OR CAST(salary_from AS numeric) > {avg_salary}""")
+            result = cur.fetchall()
         return result
 
     def get_vacancies_with_keyword(self, word):
-        self.cur.execute(
-            f"SELECT * FROM vacancies WHERE title LIKE '%{word}%'")
-        result = self.cur.fetchall()
+        with self.conn.cursor() as cur:
+            cur.execute(
+            f"SELECT * FROM vacancies WHERE title LIKE '%{word.title()}%' "
+            f"OR title LIKE'%{word.lower()}%' "
+            f"OR title LIKE '%{word.upper()}%'")
+            result = cur.fetchall()
         return result
 
     def close_conn(self):

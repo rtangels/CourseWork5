@@ -6,15 +6,14 @@ from class_DBManager import DBManager
 
 employers_id=[1552384, 3529, 15478, 6093775, 67611, 80, 1740, 2381, 2987, 115]
 
-#Url = "https://api.hh.ru/vacancies?employer_id=1455"
-#Url = "https://api.github.com"
+
 def main():
     for id_employer in employers_id:
         employer = HН_employer(id_employer)
         DBM = DBManager()
-        #employer.get_vacancy(1)
-        #DBM.insert_employer(employer.format_employer())
-        #DBM.insert_vacancies(employer.format_vacancies())
+        employer.get_vacancy(3)
+        DBM.insert_employer(employer.format_employer())
+        DBM.insert_vacancies(employer.format_vacancies())
 
 
     while True:
@@ -27,20 +26,32 @@ def main():
     exit: Выйти из программы\n""")
         # Обработка команды 1:Сортировка вакансий
         if command == '1':
-            for line in DBM.get_companies_and_vacancies_count():1
+            for line in DBM.get_companies_and_vacancies_count():
                 print(line)
-            # Обработка команды 2: ТОП вакансий
+            # Обработка команды 2 :все вакансии
         elif command == '2':
-            print('2')
-        # Обработка команды 3: Вывод на экран вакансий зарплаты в которых попадают в указанный дипазон
+            for row in DBM.get_all_vacancies():
+                print(row)
+        # Обработка команды 3: Вывод на экран средней зарплаты
         elif command == '3':
-            print('3')
+            print(DBM.get_avg_salary())
+        # Обработка команды 4: Вывод вакансий с большей зарплатой,чем средняя
+        elif command == '4':
+            for row in DBM.get_vacancies_with_higher_salary():
+                print(row)
+        elif command == '5':
+            word = input('Введите слово\n')
+            if DBM.get_vacancies_with_keyword(word):
+                for row in DBM.get_vacancies_with_keyword(word):
+                   print(row)
+            else:
+                print('Нет вакансий с таким словом')
         elif command.lower() == 'exit':
             DBM.close_conn()
             break
         else:
             print('Неверная команда')
-        DBM.close_conn()
+    DBM.close_conn()
 
 
 

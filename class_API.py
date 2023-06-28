@@ -19,7 +19,7 @@ class HН_employer():
             'User-Agent': 'Mozilla/5.0 (platform; rv:gekoversion)  Gecko/geckotrail YaBrowser/23.3.3.719'}
         self.__params ={
             "page": 0,
-            "per_page": 5
+            "per_page": 100
         }
         self.__name = ''
         self.__vacancies = []
